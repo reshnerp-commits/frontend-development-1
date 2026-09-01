@@ -1,0 +1,30 @@
+body {
+  place-items: center;
+  max-width: 500px;
+    margin:0%;
+    background-color: rgb(127, 157, 255);
+}
+
+nav {
+    margin: 0%;
+    background-color: antiquewhite;
+}
+
+a {
+    text-decoration: none;
+    font-size: 30px;
+    color: blue;
+
+}
+
+.row {
+    display: flex;
+
+}
+  
+  video {
+    display: flex;
+    width: 800px;
+  }
+
+  
