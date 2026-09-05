@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Manhwa Reading List</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #ffeef8 0%, #e8f8f5 50%, #e8f4f8 100%);
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            text-align: center;
+            color: #5a6c7d;
+            margin-bottom: 40px;
+            font-size: 2.5rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 0;
+            background: white;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+        }
+
+        .header-cell {
+            background: linear-gradient(135deg, #f5e6e8 0%, #e8f0f8 100%);
+            padding: 20px;
+            font-weight: 600;
+            color: #5a6c7d;
+            text-align: center;
+            border-right: 1px solid rgba(255,255,255,0.5);
+            transition: all 0.3s ease;
+        }
+
+        .header-cell:hover {
+            background: linear-gradient(135deg, #f0d5d8 0%, #d8e8f8 100%);
+            transform: translateY(-2px);
+        }
+
+        .header-cell:last-child {
+            border-right: none;
+        }
+
+        .grid-item {
+            padding: 20px;
+            border-right: 1px solid #e8e8e8;
+            border-bottom: 1px solid #e8e8e8;
+            display: flex;
+            align-items: center;
+            background: rgba(255,255,255,0.7);
+            transition: all 0.3s ease;
+        }
+
+        .grid-item:hover {
+            background: rgba(255,255,255,0.95);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            transform: translateY(-2px);
+        }
+
+        .grid-item.title {
+            background: linear-gradient(135deg, #fff5f8 0%, #fff8f0 100%);
+            font-weight: 500;
+            color: #4a5568;
+        }
+
+        .grid-item.status {
+            background: linear-gradient(135deg, #f8f0f8 0%, #f8f8f0 100%);
+            text-align: center;
+            justify-content: center;
+        }
+
+        .grid-item.rating {
+            background: linear-gradient(135deg, #f0f8f0 0%, #f8f8e8 100%);
+            text-align: center;
+            justify-content: center;
+            color: #f59e0b;
+            font-weight: 600;
+        }
+
+        .grid-item.chapters {
+            background: linear-gradient(135deg, #e8f8f0 0%, #f0f8f8 100%);
+            text-align: center;
+            justify-content: center;
+            color: #059669;
+            font-weight: 500;
+        }
+
+        .grid-item.notes {
+            background: linear-gradient(135deg, #f0f4f8 0%, #f8f4f0 100%);
+            font-style: italic;
+            color: #6b7280;
+            font-size: 0.9rem;
+        }
+
+        .book-icon {
+            margin-right: 10px;
+            font-size: 1.5rem;
+        }
+
+        .status-reading {
+            color: #3b82f6;
+            font-weight: 600;
+        }
+
+        .status-completed {
+            color: #10b981;
+            font-weight: 600;
+        }
+
+        .status-hold {
+            color: #f59e0b;
+            font-weight: 600;
+        }
+
+        .star {
+            color: #fbbf24;
+            margin-right: 5px;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 968px) {
+            .grid-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .header-cell, .grid-item {
+                border-right: none;
+            }
+            
+            .grid-item {
+                justify-content: flex-start;
+            }
+            
+            .grid-item::before {
+                font-weight: 600;
+                color: #5a6c7d;
+                margin-right: 10px;
+                min-width: 100px;
+            }
+            
+            .grid-item.title::before { content: "Title:"; }
+            .grid-item.status::before { content: "Status:"; }
+            .grid-item.rating::before { content: "Rating:"; }
+            .grid-item.chapters::before { content: "Chapters:"; }
+            .grid-item.notes::before { content: "Notes:"; }
+        }
+
+        /* Add new entry button */
+        .add-btn {
+            display: block;
+            margin: 30px auto 0;
+            padding: 15px 40px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 30px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .add-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+        }
+
+        /* Search/Filter bar */
+        .search-bar {
+            margin-bottom: 30px;
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .search-input {
+            padding: 12px 25px;
+            border: 2px solid #e2e8f0;
+            border-radius: 25px;
+            font-size: 1rem;
+            width: 300px;
+            transition: all 0.3s ease;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .filter-select {
+            padding: 12px 25px;
+            border: 2px solid #e2e8f0;
+            border-radius: 25px;
+            font-size: 1rem;
+            background: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .filter-select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📚 Manhwa & Manga Reading List</h1>
+        
+        <div class="search-bar">
+            <input type="text" class="search-input" placeholder="Search titles..." id="searchInput">
+            <select class="filter-select" id="statusFilter">
+                <option value="all">All Status</option>
+                <option value="reading">Reading</option>
+                <option value="completed">Completed</option>
+                <option value="hold">On Hold</option>
+                <option value="dropped">Dropped</option>
+            </select>
+        </div>
+
+        <div class="grid-container" id="readingList">
+            <!-- Header Row -->
+            <div class="header-cell">Title</div>
+            <div class="header-cell">Status</div>
+            <div class="header-cell">Rating</div>
+            <div class="header-cell">Chapters</div>
+            <div class="header-cell">Notes</div>
+
+            <!-- Row 1 -->
+            <div class="grid-item title">
+                <span class="book-icon">📖</span>
+                Tower of God
+            </div>
+            <div class="grid-item status">
+                <span class="status-reading">Reading</span>
+            </div>
+            <div class="grid-item rating">
+                <span class="star">⭐</span> 4.8/5
+            </div>
+            <div class="grid-item chapters">
+                192/200
+            </div>
+            <div class="grid-item notes">
+                Great worldbuilding!
+            </div>
+
+            <!-- Row 2 -->
+            <div class="grid-item title">
+                <span class="book-icon">📖</span>
+                Jujutsu Kaisen
+            </div>
+            <div class="grid-item status">
+                <span class="status-completed">Completed</span>
+            </div>
+            <div class="grid-item rating">
+                <span class="star">⭐</span> 4.8/5
+            </div>
+            <div class="grid-item chapters">
+                265/∞
+            </div>
+            <div class="grid-item notes">
+                Slow start but amazing art
+            </div>
+
+            <!-- Row 3 -->
+            <div class="grid-item title">
+                <span class="book-icon"></span>
+                True Beauty
+            </div>
+            <div class="grid-item status">
+                <span class="status-hold">On Hold</span>
+            </div>
+            <div class="grid-item rating">
+                <span class="star">⭐</span> 2.8/5
+            </div>
+            <div class="grid-item chapters">
+                265/∞
+            </div>
+            <div class="grid-item notes">
+                —
+            </div>
+
+            <!-- Add more rows as needed -->
+        </div>
+
+        <button class="add-btn" onclick="addNewEntry()">+ Add New Entry</button>
+    </div>
+
+    <script>
+        // Search functionality
+        document.getElementById('searchInput').addEventListener('input', function(e) {
+            const searchTerm = e.target.value.toLowerCase();
+            const titles = document.querySelectorAll('.grid-item.title');
+            
+            titles.forEach(title => {
+                const row = title.parentElement;
+                const text = title.textContent.toLowerCase();
+                
+                if (text.includes(searchTerm)) {
+                    row.style.display = 'grid';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        });
+
+        // Filter by status
+        document.getElementById('statusFilter').addEventListener('change', function(e) {
+            const filter = e.target.value;
+            const statusItems = document.querySelectorAll('.grid-item.status');
+            
+            statusItems.forEach(status => {
+                const row = status.parentElement;
+                const statusText = status.textContent.toLowerCase();
+                
+                if (filter === 'all' || statusText.includes(filter)) {
+                    row.style.display = 'grid';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        });
+
+        // Add new entry function
+        function addNewEntry() {
+            const title = prompt('Enter manhwa title:');
+            if (!title) return;
+            
+            const status = prompt('Status (Reading/Completed/On Hold/Dropped):') || 'Reading';
+            const rating = prompt('Rating (e.g., 4.5/5):') || '0/5';
+            const chapters = prompt('Chapters (e.g., 50/100):') || '0/0';
+            const notes = prompt('Notes:') || '';
+            
+            const gridContainer = document.getElementById('readingList');
+            
+            const newRow = document.createElement('div');
+            newRow.className = 'grid-item title';
+            newRow.innerHTML = `
+                <span class="book-icon">📖</span>
+                ${title}
+            `;
+            
+            const statusClass = status.toLowerCase().includes('read') ? 'status-reading' : 
+                               status.toLowerCase().includes('complete') ? 'status-completed' : 
+                               status.toLowerCase().includes('hold') ? 'status-hold' : '';
+            
+            const statusRow = document.createElement('div');
+            statusRow.className = 'grid-item status';
+            statusRow.innerHTML = `<span class="${statusClass}">${status}</span>`;
+            
+            const ratingRow = document.createElement('div');
+            ratingRow.className = 'grid-item rating';
+            ratingRow.innerHTML = `<span class="star">⭐</span> ${rating}`;
+            
+            const chaptersRow = document.createElement('div');
+            chaptersRow.className = 'grid-item chapters';
+            chaptersRow.innerHTML = chapters;
+            
+            const notesRow = document.createElement('div');
+            notesRow.className = 'grid-item notes';
+            notesRow.innerHTML = notes || '—';
+            
+            gridContainer.appendChild(newRow);
+            gridContainer.appendChild(statusRow);
+            gridContainer.appendChild(ratingRow);
+            gridContainer.appendChild(chaptersRow);
+            gridContainer.appendChild(notesRow);
+        }
+    </script>
+</body>
+</html>
